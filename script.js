@@ -1,5 +1,7 @@
 const d = new Date();
 const currentHour = d.getHours();
+const timeOffset = d.getTimezoneOffset() / 60
+const adjustedHour = currentHour - timeOffset
 var dd = String(d.getDate()).padStart(2, '0');
 var mm = String(d.getMonth() + 1).padStart(2, '0');
 var yyyy = d.getFullYear();
@@ -35,14 +37,19 @@ function populatePage(data) {
   const labels1 = []
   for (let i = 0; i < data.postsCount.length; i++) {
     const timeToAddObject = new Date(`${today} ${data.postsCount[i].time}:00:00 ${data.timeFormat}`)
-    const hourToAdd = timeToAddObject.getHours()
+    const timeOffset = timeToAddObject.getTimezoneOffset() / 60
+    const hourToAdd = timeToAddObject.getHours() - timeOffset
+    const adjustedOffset = timeOffset / 2
+    const localTime = new Date(timeToAddObject.toString())
+    const localHour = localTime.getHours() - adjustedOffset
+    localTime.setHours(localHour)
     if (currentHour < hourToAdd) {
       continue
     } else {
       if (currentHour == hourToAdd) {
-        labels1.push(`(incomplete data) ${timeToAddObject.toString()}`)
+        labels1.push(`(incomplete data) ${localTime.toLocaleTimeString()}`)
       } else {
-        labels1.push(timeToAddObject.toString())
+        labels1.push(localTime.toLocaleTimeString())
       }
     }
   }
