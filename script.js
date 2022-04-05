@@ -31,29 +31,22 @@ function updateChart() {
 function populatePage(data) {
   //separate into labels and datasets
   const dataset1 = []
+  // rewrite this whole thing https://scratch.mit.edu/discuss/topic/593896/
+  const localHours = []
+  const localData = []
   for (let i = 0; i < data.postsCount.length; i++) {
-    dataset1.push(data.postsCount[i].value)
-  }
-  const labels1 = []
-  for (let i = 0; i < data.postsCount.length; i++) {
-    const timeToAddObject = new Date(`${today} ${data.postsCount[i].time}:00:00 ${data.timeFormat}`)
-    const timeOffset = timeToAddObject.getTimezoneOffset() / 60
-    const hourToAdd = timeToAddObject.getHours() - timeOffset
-    const adjustedOffset = timeOffset / 2
-    const localTime = new Date(timeToAddObject.toString())
-    const localHour = localTime.getHours() - adjustedOffset
-    localTime.setHours(localHour)
-    if (currentHour < hourToAdd) {
+    const localObj = new Date(`${today} ${data.postsCount[i].time}:00:00 ${data.timeFormat}`)
+    const localTime = new Date(localObj.toString())
+    console.log(`hour in ${data.timeFormat}: ${data.postsCount[i].time}. hour in local time: ${localTime.getHours()}`)
+    const localHour = localTime.getHours()
+    if (localHour > currentHour) {
       continue
     } else {
-      if (currentHour == hourToAdd) {
-        labels1.push(`(incomplete data) ${localTime.toLocaleTimeString()}`)
-      } else {
-        labels1.push(localTime.toLocaleTimeString())
-      }
+      localHours.push(localTime.toLocaleTimeString())
+      localData.push(data.postsCount[i].value)
     }
   }
-  addChart(labels1, dataset1, data.timeFormat)
+  addChart(localHours, localData, data.timeFormat)
 }
 
 function addChart(labels, dataset, timeFormat) {
