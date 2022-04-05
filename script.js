@@ -37,12 +37,15 @@ function populatePage(data) {
   for (let i = 0; i < data.postsCount.length; i++) {
     const localObj = new Date(`${today} ${data.postsCount[i].time}:00:00 ${data.timeFormat}`)
     const localTime = new Date(localObj.toString())
-    console.log(`hour in ${data.timeFormat}: ${data.postsCount[i].time}. hour in local time: ${localTime.getHours()}`)
     const localHour = localTime.getHours()
     if (localHour > currentHour) {
       continue
     } else {
-      localHours.push(localTime.toLocaleTimeString())
+      if (currentHour == localHour) {
+        localHours.push(`${localTime.toLocaleTimeString()} (incomplete data)`)
+      } else {
+        localHours.push(localTime.toLocaleTimeString())
+      }
       localData.push(data.postsCount[i].value)
     }
   }
