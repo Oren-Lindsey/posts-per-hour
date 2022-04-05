@@ -42,7 +42,7 @@ function populatePage(data) {
       continue
     } else {
       if (currentHour == localHour) {
-        localHours.push(`${localTime.toLocaleTimeString()} ${getTimezoneName()}  (incomplete data)`)
+        localHours.push(`${localTime.toLocaleTimeString()} ${getTimezoneName()} (incomplete data)`)
       } else {
         localHours.push(`${localTime.toLocaleTimeString()} ${getTimezoneName()}`)
       }
