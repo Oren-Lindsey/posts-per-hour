@@ -6,6 +6,29 @@ var dd = String(d.getDate()).padStart(2, '0');
 var mm = String(d.getMonth() + 1).padStart(2, '0');
 var yyyy = d.getFullYear();
 const today = mm + '/' + dd + '/' + yyyy;
+const loader = document.getElementById('loader')
+
+let params = new URLSearchParams(document.location.search);
+let color = params.get('color')
+let bgcolor = params.get('bgcolor')
+let textcolor = params.get('textcolor')
+let bordercolor = params.get('bordercolor')
+if (color == null) {
+  color = '#D14D63'
+}
+if (bgcolor !== null) {
+  document.body.style.backgroundColor = bgcolor
+}
+if (textcolor == null) {
+  textcolor = 'white'
+}
+if (bordercolor === null) {
+  bordercolor = 'grey'
+}
+
+function hideLoader() {
+  loader.style.display = 'none'
+}
 
 const chartAreaBorder = {
   id: 'chartAreaBorder',
@@ -42,9 +65,9 @@ function populatePage(data) {
       continue
     } else {
       if (currentHour == localHour) {
-        localHours.push(`${localTime.toLocaleTimeString()} ${getTimezoneName()} (incomplete data)`)
+        localHours.push(`${localTime.toLocaleTimeString()} (incomplete data)`)
       } else {
-        localHours.push(`${localTime.toLocaleTimeString()} ${getTimezoneName()}`)
+        localHours.push(localTime.toLocaleTimeString())
       }
       localData.push(data.postsCount[i].value)
     }
@@ -53,23 +76,6 @@ function populatePage(data) {
 }
 
 function addChart(labels, dataset, timeFormat) {
-  let params = new URLSearchParams(document.location.search);
-  let color = params.get('color')
-  let bgcolor = params.get('bgcolor')
-  let textcolor = params.get('textcolor')
-  let bordercolor = params.get('bordercolor')
-  if (color == null) {
-    color = '#D14D63'
-  }
-  if (bgcolor !== null) {
-    document.body.style.backgroundColor = bgcolor
-  }
-  if (textcolor == null) {
-    textcolor = 'white'
-  }
-  if (bordercolor === null) {
-    bordercolor = 'grey'
-  }
   const data = {
     labels: labels,
     datasets: [{
@@ -84,17 +90,12 @@ function addChart(labels, dataset, timeFormat) {
     data: data,
     options: {'responsive': true, scales: {xAxis: {display: false, min: 0},yAxis: {min: 0, ticks: {color: textcolor}, grid: {color: bordercolor}}},plugins: {legend: {labels: {color: textcolor}}, chartAreaBorder: {borderColor: bordercolor,borderWidth: 2,}}},
     plugins: [chartAreaBorder]
-  };
+  }
+  hideLoader()
   const myChart = new Chart(
     document.getElementById('postChart'),
     config
   );
 }
-
-function getTimezoneName() {
-  var zone = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'}).split(' ')[2]
-  return zone
-}
-
 updateChart()
 setInterval(updateChart, 900000)
