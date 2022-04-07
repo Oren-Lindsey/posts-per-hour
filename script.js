@@ -7,6 +7,7 @@ var mm = String(d.getMonth() + 1).padStart(2, '0');
 var yyyy = d.getFullYear();
 const today = mm + '/' + dd + '/' + yyyy;
 const loader = document.getElementById('loader')
+const error = document.getElementById('errorMsg')
 
 let params = new URLSearchParams(document.location.search);
 let color = params.get('color')
@@ -48,7 +49,10 @@ const chartAreaBorder = {
 function updateChart() {
   fetch('https://newest-posts.s40.repl.co/api/hour')
     .then(res => res.json())
-    .then(data => populatePage(data))
+    .then(data => {
+      const chart = populatePage(data)
+      return chart
+    })
 }
 
 function populatePage(data) {
@@ -72,7 +76,7 @@ function populatePage(data) {
       localData.push(data.postsCount[i].value)
     }
   }
-  addChart(localHours, localData, data.timeFormat)
+  const chart = addChart(localHours, localData, data.timeFormat)
 }
 
 function addChart(labels, dataset, timeFormat) {
@@ -96,6 +100,12 @@ function addChart(labels, dataset, timeFormat) {
     document.getElementById('postChart'),
     config
   );
+  return myChart
 }
-updateChart()
-setInterval(updateChart, 900000)
+try {
+  updateChart()
+} catch (err) {
+  console.error(err)
+  hideLoader()
+  error.removeAttribute('hidden')
+}
