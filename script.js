@@ -8,6 +8,7 @@ var yyyy = d.getFullYear();
 const today = mm + '/' + dd + '/' + yyyy;
 const loader = document.getElementById('loader')
 const error = document.getElementById('errorMsg')
+const count = document.getElementById('count')
 
 let params = new URLSearchParams(document.location.search);
 let color = params.get('color')
@@ -56,9 +57,6 @@ function updateChart() {
 }
 
 function populatePage(data) {
-  //separate into labels and datasets
-  const dataset1 = []
-  // rewrite this whole thing https://scratch.mit.edu/discuss/topic/593896/
   const localHours = []
   const localData = []
   for (let i = 0; i < data.postsCount.length; i++) {
@@ -96,12 +94,15 @@ function addChart(labels, dataset, timeFormat) {
     plugins: [chartAreaBorder]
   }
   hideLoader()
+  const sum = dataset.reduce((partialSum, a) => partialSum + a, 0);
+  count.innerText = `Posts so far today: ${sum}`
   const myChart = new Chart(
     document.getElementById('postChart'),
     config
   );
   return myChart
 }
+
 try {
   updateChart()
 } catch (err) {
